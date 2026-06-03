@@ -147,7 +147,7 @@ Emojis (e.g., `#test😊`) **do not turn** a tag into a non-Latin one if all oth
 
 ## Testing
 
-The source code is fully covered by unit tests using `Vitest`. The tests verify various linguistic combinations, edge-case ASCII characters, nested tags and emojis.
+The source code is covered by unit tests using `Vitest`. The tests verify various linguistic combinations, edge-case ASCII characters, nested tags and emojis.
 
 ## License
 
