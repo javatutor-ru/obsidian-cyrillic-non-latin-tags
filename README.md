@@ -79,7 +79,7 @@ The plugin only adds new classes to the nested `<span>` elements. Parent element
 
 ### Compatibility with Third-Party Plugins
 
-To ensure third-party plugins can recognize and style tags processed by this plugin, the nested `<span>` elements must contain the standard Obsidian `cm-hashtag` class. Therefore, the plugin injects this class into the nested elements as well.
+To ensure third-party plugins can recognize and style tags processed by this plugin, the nested `<span>` elements must contain the standard Obsidian `cm-hashtag` class. Therefore, the plugin also injects the class into these elements. 
 
 
 ### Nested Elements and Style Preservation
