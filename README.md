@@ -1,28 +1,31 @@
-# Cyrillic and Non-Latin Tags (Плагин для Obsidian)
+[Читать на русском языке][1]
 
-Плагин динамически добавляет специальные CSS-классы к тегам, содержащим кириллицу или любые другие нелатинские буквы (иероглифы, диакритические знаки и т. д.), в режиме редактирования (**Editing view**). 
+# Cyrillic and Non-Latin Tags (Obsidian Plugin)
 
-Это позволяет изменять внешний вид национальных тегов через CSS или настраивать их оформление с помощью сторонних плагинов (например, *Colored Tags Wrangler*).
+The plugin dynamically adds custom CSS classes to tags containing any non-Latin letters (cyrillic, hieroglyphs, diacritics, etc.) in **Editing view**. 
 
-## Как это работает для пользователя
+This allows you to customize the appearance of non-Latin tags via CSS or configure their styling using third-party plugins (such as *Colored Tags Wrangler*).
 
-Плагин анализирует содержимое тега и обрабатывает только те, которые содержат хотя бы одну нелатинскую букву. 
+## How It Works for the User
 
-**Латинские теги** (например, `#task123`) остаются нетронутыми и сохраняют стандартные классы Obsidian.
+Simply install and enable the plugin in your Obsidian settings. It requires zero configuration and is controlled by a single toggle switch.
 
-**Нелатинские теги** получают два дополнительных класса:
-  - **Общий класс:** `cm-tag-non-latin` — для массового изменения стиля всех национальных тегов.
-  - **Персональный динамический класс:** `cm-tag-[имя_тега]` — для точечной настройки конкретного тега.
+The plugin analyzes the tag content and processes only those that contain at least one non-Latin letter.
 
-**Пример.** Тег `#завершено` получит общий класс `cm-tag-non-latin` и персональный класс `cm-tag-завершено`.
+**Latin tags** (e.g., `#task123`) remain untouched and retain standard Obsidian classes.
 
+**Non-Latin tags** receive two additional classes:
+* **Global class:** `cm-tag-non-latin` — for styling all non-Latin tags.
+* **Personal dynamic class:** `cm-tag-[tag_name]` — for fine-tuning specific tags.
 
+**Example:** The tag `#завершено` will receive the global class `cm-tag-non-latin` and the personal class `cm-tag-завершено`.
 
-## Примеры стилизации через CSS
+## CSS Styling Examples
 
-Вы можете использовать эти классы в своем CSS-файле из папки `.obsidian/snippets`, чтобы визуально выделить национальные теги.
+You can use these classes in your CSS snippet inside the `.obsidian/snippets` folder to visually highlight your tags.
 
-### Выделение всех нелатинских тегов
+### Styling All Non-Latin Tags
+
 ```css
 .cm-tag-non-latin { 
  	color: whitesmoke; 
@@ -30,19 +33,24 @@
 } 
 ```
 
-### Стилизация конкретного нелатинского тега
-Для тега `#важно` плагин создаст персональный класс `cm-tag-важно`:
+### Styling a Specific Non-Latin Tag
+
+For the tag `#идея1`, the plugin will generate a personal class `cm-tag-идея1`:
 ```css
-.cm-tag-важно { 
- 	background-color: darkred; 
+.cm-tag-идея1 { 
+ 	background-color: royalblue; 
  	color: #ffffff; 
 	font-weight: bold; 
 } 
 ```
 
-### Работа со вложенными тегами
+### Working with Nested Tags (Forward Slash)
 
-Для вложенных тегов (например, `#работа/проект`) косая черта сохраняется в имени класса. В CSS-файле этот символ необходимо экранировать обратным слэшем `\`:
+For nested tags, such as `#работа/проект`, the forward slash is preserved in the class name — allowing you to distinguish it from the single-word tag `#работапроект`. 
+
+In the DOM structure, the class name remains in its original form: `<span class="cm-tag-работа/проект">`.
+
+In your CSS file, this character must be escaped with a backslash `\`:
 ```css
 .cm-tag-работа\/проект { 
 	background-color: white; 
@@ -51,57 +59,96 @@
 
 
 
-## Модификация DOM и детали реализации для разработчиков
+## Implementation Details for Developers
 
-Каждый тег в Obsidian формируется из нескольких элементов `<span>`. Когда плагин обнаруживает нелатинский тег, он последовательно обходит все составляющие его HTML-элементы и добавляет в их атрибут `class` дополнительные классы.
+Each tag in Obsidian is composed of multiple `<span>` elements. When the plugin detects a non-Latin tag, it iterates through all its constituent HTML elements and injects custom classes into their `class` attribute.
 
-### Общие классы
+### Nested \<span\> Elements
 
-* `cm-hashtag` — базовый системный класс Obsidian.
-* `cm-tag-non-latin` — общий класс для всех нелатинских тегов.
-* `cm-tag-[имя_тега]` — персональный динамический класс. Имя тега формируется «как есть», полностью сохраняя нижние подчеркивания (`_`), косые черты (`/`) и эмодзи.
+When a class is added to a `<span>` element, an additional nested `<span>` element is automatically generated within the DOM structure, which then holds the actual tag content.
 
-### Точечные классы для фиксации границ
-1. **Первый элемент** (символ `#`) дополнительно получает класс `cm-hashtag-begin`.
-2. **Последний элемент** (конец тега) дополнительно получает класс `cm-hashtag-end`.
-
-### Пример структуры тега `#тег_тест`
-
-Obsidian разбивает такой тег с подчеркиванием на три отдельных элемента `<span>`. Плагин находит их в синтаксическом дереве и добавляет им классы:
+The resulting structure looks like this:
 ```html
-<!-- 1. Первый элемент (символ решетки '#') -->
+<span class="..."> <!-- original parent element -->
+	<span class="...">tag_name</span> <!-- nested element -->
+</span>
+```
+
+The plugin only adds new classes to the nested `<span>` elements. Parent elements retain their original Obsidian classes.
+
+
+### Compatibility with Third-Party Plugins
+
+To ensure third-party plugins can recognize and style tags processed by this plugin, the nested `<span>` elements must contain the standard Obsidian `cm-hashtag` class. Therefore, the plugin injects this class into the nested elements as well.
+
+
+### Nested Elements and Style Preservation
+ 
+When a nested structure of elements containing the `cm-hashtag` class appears, the default styling breaks: extra paddings/margins appear, and the tag's font size decreases.
+
+This happens due to the following class layering:
+
+```html
+<span class="cm-hashtag ..."> <!-- parent element -->
+	<span class="cm-hashtag ...">tag_name</span> <!-- nested element -->
+</span>
+```
+
+To preserve the original style, the plugin integrates a custom theme extension that neutralizes the parent `<span>` element's impact on non-Latin tags:
+
+```javascript
+const tagThemeExtension = EditorView.theme({
+    ".cm-hashtag:has(.cm-tag-non-latin)": {
+        display: "contents !important",
+        fontSize: "inherit !important",
+        lineHeight: "inherit !important",
+        fontFamily: "inherit !important",
+        fontWeight: "inherit !important"
+    }
+});
+```
+
+
+## DOM Structure
+
+A tag in Obsidian is composed of two or more `<span>` elements.  By traversing the syntax tree and analyzing the nodes, the plugin injects the following additional classes into the elements of non-Latin tags.
+
+### Classes for All \<span\> Elements
+
+* `cm-hashtag` — base Obsidian system class.
+* `cm-tag-non-latin` — global class for all non-Latin tags.
+* `cm-tag-[tag_name]` — personal dynamic class. The tag name is generated "as is", fully preserving underscores (`_`), forward slashes (`/`), and emojis.
+
+### Boundary Classes for Tag Limits
+
+1. The first element (the `#` symbol) additionally receives the `cm-hashtag-begin` class.
+2. The last element (the end of the tag) additionally receives the `cm-hashtag-end` class.
+
+### Example: DOM Structure for the #тег\_тест Tag
+
+Obsidian splits this tag with an underscore into three separate `<span>` elements. The plugin locates them in the syntax tree and appends the custom classes:
+
+```html
+<!-- 1. First element (the '#' symbol) -->
 <span class="cm-hashtag cm-hashtag-begin cm-tag-non-latin cm-tag-тег_тест">#</span> 
 
-<!-- 2. Второй элемент -->
+<!-- 2. Second element -->
 <span class="cm-hashtag cm-tag-non-latin cm-tag-тег_тест">тег_</span> 
 
-<!-- 3. Последний элемент -->
+<!-- 3. Last element -->
 <span class="cm-hashtag cm-hashtag-end cm-tag-non-latin cm-tag-тег_тест">тест</span> 
 ```
 
-### Эмодзи
-Эмодзи (например, `#test😊`) **не превращают** тег в нелатинский, если в нем нет национальных букв.
+### Emojis
 
+Emojis (e.g., `#test😊`) **do not turn** a tag into a non-Latin one if all other letters inside it are Latin.
 
-## Вложенность элементов DOM и защита верстки
-Когда к элементу `<span>` добавляется класс, в структуре DOM автоматически формируется дополнительный вложенный элемент `<span>`, куда и попадает содержимое тега. Все описанные выше классы принадлежат именно этим вложенным элементам. Родительские элементы сохраняют свои исходные классы.
+## Testing
 
-Чтобы при такой вложенности не нарушалось стандартное форматирование (уменьшение шрифта, появление лишних отступов), в плагин интегрировано расширение темы:
-```javascript
-const tagThemeExtension = EditorView.theme({ 
-	".cm-hashtag:has(.cm-tag-non-latin)": { 
-		display: "contents !important", 
-		fontSize: "inherit !important", 
-		lineHeight: "inherit !important", 
-		fontFamily: "inherit !important", 
-		fontWeight: "inherit !important"
-	 } 
-}); 
-```
+The source code is fully covered by unit tests using `Vitest`. The tests verify various linguistic combinations, edge-case ASCII characters, nested tags and emojis.
 
+## License
 
+This project is distributed under the free MIT License.
 
-## Лицензия и тестирование
-
-* **MIT License:** Проект распространяется под свободной лицензией MIT.
-* **Vitest:** Исходный код полностью покрыт модульными тестами. Проверяются лингвистические комбинации, граничные ASCII-символы, вложенные теги и эмодзи.
+[1]:	README_RU.md
