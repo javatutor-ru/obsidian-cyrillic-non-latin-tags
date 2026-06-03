@@ -1,4 +1,4 @@
-[Читать на русском языке][1]
+**English** | [Русский][1]
 
 # Cyrillic and Non-Latin Tags (Obsidian Plugin)
 

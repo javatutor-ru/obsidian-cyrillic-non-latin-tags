@@ -1,4 +1,4 @@
-[Read in English][1]
+[English][1] | **Русский**
 
 # Cyrillic and Non-Latin Tags (Плагин для Obsidian)
 
