@@ -63,6 +63,8 @@ In your CSS file, this character must be escaped with a backslash `\`:
 
 Each tag in Obsidian is composed of multiple `<span>` elements. When the plugin detects a non-Latin tag, it iterates through all its constituent HTML elements and injects custom classes into their `class` attribute.
 
+Elements of Latin tags remain untouched.
+
 ### Nested \<span\> Elements
 
 When a class is added to a `<span>` element, an additional nested `<span>` element is automatically generated within the DOM structure, which then holds the actual tag content.
