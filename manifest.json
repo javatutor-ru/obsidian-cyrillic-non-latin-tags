@@ -1,0 +1,10 @@
+{
+  "id": "cyrillic-non-latin-tags",
+  "name": "Cyrillic and Non-Latin Tags",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Enable CSS classes for Cyrillic and other Non-Latin tags",
+  "author": "Kirill Chokparov",
+  "authorUrl": "https://javatutor.ru",
+  "isDesktopOnly": false
+}
