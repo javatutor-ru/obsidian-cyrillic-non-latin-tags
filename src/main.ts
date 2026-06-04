@@ -10,8 +10,7 @@ import {
 import { syntaxTree } from "@codemirror/language";
 
 
-// Внедряем CSS-стили через CodeMirror.
-// Убираем влияние родителя-обертки <span>, чтобы обёртка не изменяла характеристики текста тега (иначе текст становится мельче и появляются отступы). 
+// Внедряем CSS-стили. Убираем влияние родителя-обертки <span>, чтобы обёртка не изменяла характеристики текста тега
 const tagThemeExtension = EditorView.theme({
     ".cm-hashtag:has(.cm-tag-non-latin)": {
         display: "contents !important",
@@ -22,7 +21,7 @@ const tagThemeExtension = EditorView.theme({
     }
 });
 
-// Экспортируем класс для возможности изолированного тестирования
+// Экспортируем класс для изолированного тестирования
 export class CyrillicNonLatinTags {
     decorations: DecorationSet;
 
@@ -38,8 +37,8 @@ export class CyrillicNonLatinTags {
 
     isNonLatinTag(tagText: string): boolean {
 
-        // 1. Отрицательный lookahead. Символ НЕ ДОЛЖЕН БЫТЬ ASCII.
-        // 2. Если первое условие выполнено для символа, то проверяется второе условие — этот символ является буквой.
+        // 1. Символ не должен быть ASCII.
+        // 2. Если первое условие выполнено, то проверяется второе условие — этот символ является буквой.
         return /(?![\u0000-\u007F])\p{L}/u.test(tagText);
 
     }
@@ -103,7 +102,6 @@ export class CyrillicNonLatinTags {
                             });
                         }
 
-                        // Полный сброс контекста для следующего тега
                         tagStartFrom = null;
                         currentTagNodes = [];
                     }
@@ -115,16 +113,13 @@ export class CyrillicNonLatinTags {
     }
 }
 
-// Передаем именованный класс в CodeMirror
 const tagHighlighterPlugin = ViewPlugin.fromClass(CyrillicNonLatinTags, {
     decorations: (v) => v.decorations
 });
 
-// Класс плагина
 export default class NonLatinTagPlugin extends Plugin {
 
     async onload() {
-        // Регистрируем плагин и встроенные стили
         this.registerEditorExtension([tagHighlighterPlugin, tagThemeExtension]);
     }
 
