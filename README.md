@@ -46,14 +46,15 @@ For the tag `#идея1`, the plugin will generate a personal class `cm-tag-ид
 
 ### Working with Nested Tags (Forward Slash)
 
-Following the Obsidian style for Latin tags, the plugin removes the slash for nested non-Latin tags, such as `#книга/глава1`.
+Following the Obsidian style for Latin tags, the plugin removes slashes in the class name for nested non-Latin tags, such as `#книга/глава1/часть2`.
 
-In the DOM structure, the class name looks like this: `<span class="cm-tag-книгаглава1">`.
+In the DOM structure, the class name looks like this: `<span class="cm-tag-книгаглава1часть2">`.
 
 Styling in the CSS file:
 ```css
-.cm-tag-книгаглава1 {    
-    background-color: darkgoldenrod;
+.cm-tag-книгаглава1часть2 {  
+    color: grey;  
+    background-color: mistyrose;
 }
 ```
 
@@ -119,7 +120,7 @@ A tag in Obsidian is composed of two or more `<span>` elements.  By traversing t
 
 * `cm-hashtag` — base Obsidian system class.
 * `cm-tag-non-latin` — global class for all non-Latin tags.
-* `cm-tag-[tag_name]` — personal dynamic class. The tag name is generated "as is", fully preserving underscores (`_`), forward slashes (`/`), and emojis.
+* `cm-tag-[tag_name]` — personal dynamic class. The tag name is generated "as is", preserving all characters except for forward slashes (`/`).
 
 ### Boundary Classes for Tag Limits
 
