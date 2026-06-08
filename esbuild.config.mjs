@@ -41,7 +41,7 @@ const obsidianCopyPlugin = {
 
                 console.log("[esbuild] Files successfully copied to Obsidian.");
             } catch (err) {
-                console.error("Error when copying files to Obsidian:", err);
+                console.error("[esbuild] Error when copying files to Obsidian:", err);
             }
         });
     }
