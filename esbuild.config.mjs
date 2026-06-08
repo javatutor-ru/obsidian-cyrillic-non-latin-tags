@@ -12,7 +12,7 @@ if you want to view the source, please visit the github repository of this plugi
 
 const isProd = (process.argv[2] === "production");
 
-// Получаем из файла .env путь для переноса готовых файлов в папку плагина Obsidian
+// Get the path from the .env file for transferring ready files to the Obsidian plugin folder
 let obsidianPath = "";
 if (fs.existsSync(".env")) {
     const env = fs.readFileSync(".env", "utf-8");
@@ -21,14 +21,14 @@ if (fs.existsSync(".env")) {
         obsidianPath = match[1];
 }
 
-// Плагин автоматического переноса готовых файлов в Obsidian после каждой сборки
+// Plugin for automatic transfer of ready files to Obsidian after each build
 const obsidianCopyPlugin = {
     name: 'obsidian-copy',
     setup(build) {
         build.onEnd(async () => {
 
             if (!obsidianPath) {
-                console.log("[esbuild] Локальный путь копирования не задан в .env, пропускаем.");
+                console.log("[esbuild] Local copy path is not set in .env, skipping.");
                 return;
             }
 
@@ -39,9 +39,9 @@ const obsidianCopyPlugin = {
                 fs.copyFileSync("dist/main.js", path.join(obsidianPath, "main.js"));
                 fs.copyFileSync("manifest.json", path.join(obsidianPath, "manifest.json"));
 
-                console.log("[esbuild] Файлы успешно скопированы в Obsidian.");
+                console.log("[esbuild] Files successfully copied to Obsidian.");
             } catch (err) {
-                console.error("Ошибка при копировании файлов в Obsidian:", err);
+                console.error("Error when copying files to Obsidian:", err);
             }
         });
     }
@@ -67,7 +67,7 @@ const context = await esbuild.context({
     sourcemap: isProd ? false : "inline",
     minify: isProd,
     outfile: "dist/main.js",
-    plugins: [obsidianCopyPlugin] // Подключаем плагин копирования файлов
+    plugins: [obsidianCopyPlugin] // Enable the Copying plugin
 });
 
 if (isProd) {
