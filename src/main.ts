@@ -10,7 +10,7 @@ import {
 import { syntaxTree } from "@codemirror/language";
 
 
-// Внедряем CSS-стили. Убираем влияние родителя-обертки <span>, чтобы обёртка не изменяла характеристики текста тега
+// Inject CSS styles. Remove the influence of the <span> parent so that the wrapper does not alter the font properties of the tag text
 const tagThemeExtension = EditorView.theme({
     ".cm-hashtag:has(.cm-tag-non-latin)": {
         display: "contents !important",
@@ -21,7 +21,7 @@ const tagThemeExtension = EditorView.theme({
     }
 });
 
-// Экспортируем класс для изолированного тестирования
+// Export the class for isolated testing
 export class CyrillicNonLatinTags {
     decorations: DecorationSet;
 
@@ -37,8 +37,8 @@ export class CyrillicNonLatinTags {
 
     isNonLatinTag(tagText: string): boolean {
 
-        // 1. Символ не должен быть ASCII.
-        // 2. Если первое условие выполнено, то проверяется второе условие — этот символ является буквой.
+        // 1. The character must not be ASCII.
+        // 2. If the first condition is met, check the second one — whether this character is a letter.
         return /(?![\u0000-\u007F])\p{L}/u.test(tagText);
 
     }
@@ -56,27 +56,30 @@ export class CyrillicNonLatinTags {
                 enter: (node) => {
                     const nodeName = node.name;
 
-                    // Условие начала тега
+                    // Tag start condition
                     if (nodeName.includes("hashtag-begin")) {
                         tagStartFrom = node.from;
                         currentTagNodes = [];
                     }
 
-                    // Собираем все составные части (span-узлы) тега
+                    // Collect all component parts (span nodes) of the tag
                     if (tagStartFrom !== null) {
                         currentTagNodes.push({ from: node.from, to: node.to });
                     }
 
-                    // Условие конца тега
+                    // Tag end condition
                     if (nodeName.includes("hashtag-end") && tagStartFrom !== null) {
-                        // Текст тега без знака решетки #
-                        const tagText = view.state.doc.sliceString(tagStartFrom + 1, node.to);
+                        // Tag text excluding the hash symbol #
+                        let tagText = view.state.doc.sliceString(tagStartFrom + 1, node.to);
 
                         if (this.isNonLatinTag(tagText)) {
 
+                            // Remove all slashes from the class name
+                            tagText = tagText.replaceAll("/", "");
+
                             const dynamicClassName = `cm-tag-${tagText}`;
 
-                            // Создаем динамические декорации для начала, середины и конца тега.
+                            // Create dynamic decorations for the start, middle, and end of the tag
                             const dynamicBegin = Decoration.mark({
                                 attributes: { class: `cm-hashtag cm-hashtag-begin cm-tag-non-latin ${dynamicClassName}` }
                             });
@@ -87,16 +90,16 @@ export class CyrillicNonLatinTags {
                                 attributes: { class: `cm-hashtag cm-hashtag-end cm-tag-non-latin ${dynamicClassName}` }
                             });
 
-                            // Распределяем декорации по узлам
+                            // Distribute decorations across nodes           
                             currentTagNodes.forEach((subNode, index) => {
                                 if (index === 0) {
-                                    // Первый элемент. Решетка (#) получает все базовые классы + cm-hashtag-begin
+                                    // First element, the hash symbol (#) gets all base classes + cm-hashtag-begin
                                     builder.push(dynamicBegin.range(subNode.from, subNode.to));
                                 } else if (index === currentTagNodes.length - 1) {
-                                    // Последний элемент тега получает все базовые классы + cm-hashtag-end
+                                    // Last element gets all base classes + cm-hashtag-end
                                     builder.push(dynamicEnd.range(subNode.from, subNode.to));
                                 } else {
-                                    // Все промежуточные элементы получают базовые классы
+                                    // All intermediate elements get base classes
                                     builder.push(dynamicMiddle.range(subNode.from, subNode.to));
                                 }
                             });

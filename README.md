@@ -33,7 +33,7 @@ You can use these classes in your CSS snippet inside the `.obsidian/snippets` fo
 } 
 ```
 
-### Styling a Specific Non-Latin Tag
+### Styling a Particular Non-Latin Tag
 
 For the tag `#идея1`, the plugin will generate a personal class `cm-tag-идея1`:
 ```css
@@ -46,18 +46,18 @@ For the tag `#идея1`, the plugin will generate a personal class `cm-tag-ид
 
 ### Working with Nested Tags (Forward Slash)
 
-For nested tags, such as `#работа/проект`, the forward slash is preserved in the class name — allowing you to distinguish it from the single-word tag `#работапроект`. 
+Following the Obsidian style for Latin tags, the plugin removes the slash for nested non-Latin tags, such as `#книга/глава1`.
 
-In the DOM structure, the class name remains in its original form: `<span class="cm-tag-работа/проект">`.
+In the DOM structure, the class name looks like this: `<span class="cm-tag-книгаглава1">`.
 
-In your CSS file, this character must be escaped with a backslash `\`:
+Styling in the CSS file:
 ```css
-.cm-tag-работа\/проект { 
-	background-color: white; 
-} 
+.cm-tag-книгаглава1 {    
+    background-color: darkgoldenrod;
+}
 ```
 
-
+This approach also ensures compatibility with third-party plugins for styling nested non-Latin tags.
 
 ## Implementation Details for Developers
 
