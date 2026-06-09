@@ -1,0 +1,11 @@
+{
+  "id": "cyrillic-non-latin-tags",
+  "name": "Cyrillic and Non-Latin Tags",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Adds custom CSS classes to tags containing any non-Latin letters (cyrillic, hieroglyphs, diacritics, etc.) in Editing view. This allows you to customize the appearance of non-Latin tags via CSS snippets and third-party plugins.",
+  "author": "Kirill Chokparov",
+  "authorUrl": "https://javatutor.ru",
+  "isDesktopOnly": false
+}
+
