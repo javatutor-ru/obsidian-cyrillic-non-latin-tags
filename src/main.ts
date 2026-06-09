@@ -37,9 +37,10 @@ export class CyrillicNonLatinTags {
 
     isNonLatinTag(tagText: string): boolean {
 
-        // 1. The character must not be ASCII.
-        // 2. If the first condition is met, check the second one — whether this character is a letter.
-        return /(?![\u0000-\u007F])\p{L}/u.test(tagText);
+        // RegExp optimized for ESLint.
+        // 1. Ensures the character is not an ASCII letter [A-Za-z].
+        // 2. Checks if the remaining character is a Unicode letter (\p{L}).
+        return /(?![A-Za-z])\p{L}/u.test(tagText);
 
     }
 
@@ -117,16 +118,13 @@ export class CyrillicNonLatinTags {
 }
 
 const tagHighlighterPlugin = ViewPlugin.fromClass(CyrillicNonLatinTags, {
-    decorations: (v) => v.decorations
+    decorations: (v: CyrillicNonLatinTags) => v.decorations
 });
 
 export default class NonLatinTagPlugin extends Plugin {
 
-    async onload() {
+    onload() {
         this.registerEditorExtension([tagHighlighterPlugin, tagThemeExtension]);
     }
 
-    onunload() {
-
-    }
 }
