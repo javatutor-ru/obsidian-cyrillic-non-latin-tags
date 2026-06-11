@@ -2,7 +2,7 @@
 
 # Cyrillic and Non-Latin Tags (Obsidian Plugin)
 
-The plugin dynamically adds custom CSS classes to tags containing any non-Latin letters (cyrillic, hieroglyphs, diacritics, etc.) in **Editing view**. 
+The plugin adds custom CSS classes to tags containing any non-Latin letters (cyrillic, hieroglyphs, diacritics, etc.) in **Editing view**. 
 
 This allows you to customize the appearance of non-Latin tags via CSS or configure their styling using third-party plugins (such as *Colored Tags Wrangler*).
 
@@ -12,13 +12,15 @@ Simply install and enable the plugin in your Obsidian settings. It requires zero
 
 The plugin analyzes the tag content and processes only those that contain at least one non-Latin letter.
 
-**Latin tags** (e.g., `#task123`) remain untouched and retain standard Obsidian classes.
+**Latin tags** (e.g., `#task`) remain untouched and retain standard Obsidian classes.
 
 **Non-Latin tags** receive two additional classes:
-* **Global class:** `cm-tag-non-latin` — for styling all non-Latin tags.
+* **Generic class:** `cm-tag-non-latin` — for styling all non-Latin tags.
 * **Personal dynamic class:** `cm-tag-[tag_name]` — for fine-tuning specific tags.
 
-**Example:** The tag `#завершено` will receive the global class `cm-tag-non-latin` and the personal class `cm-tag-завершено`.
+**Example 1.** The `#завершено` tag will receive the generic class `cm-tag-non-latin` and the personal class `cm-tag-завершено`.
+
+**Example 2.** The `#초봄날` tag will receive the generic `cm-tag-non-latin` class and the personal `cm-tag-초봄날` class.
 
 ## CSS Styling Examples
 
@@ -28,21 +30,32 @@ You can use these classes in your CSS snippet inside the `.obsidian/snippets` fo
 
 ```css
 .cm-tag-non-latin { 
- 	color: whitesmoke; 
  	background-color: green; 
+ 	color: whitesmoke; 
 } 
 ```
 
 ### Styling a Particular Non-Latin Tag
 
-For the tag `#идея1`, the plugin will generate a personal class `cm-tag-идея1`:
+The `#завершено` tag:
+
 ```css
-.cm-tag-идея1 { 
- 	background-color: royalblue; 
- 	color: #ffffff; 
-	font-weight: bold; 
+.cm-tag-завершено { 
+    background-color: royalblue; 
+    color: #ffffff; 
+    font-weight: bold; 
 } 
 ```
+
+The `#초봄날` tag:
+
+```css
+.cm-tag-초봄날 {
+    background-color: #E2F0D9;
+    color: #386641;
+}
+```
+
 
 ### Working with Nested Tags (Forward Slash)
 
@@ -59,6 +72,10 @@ Styling in the CSS file:
 ```
 
 This approach also ensures compatibility with third-party plugins for styling nested non-Latin tags.
+
+### Emojis and digits
+
+Emojis and digits (e.g., `#test😊`, `#task123`) **do not turn** a tag into a non-Latin one if all other letters inside it are Latin.
 
 ## Implementation Details for Developers
 
@@ -127,7 +144,9 @@ A tag in Obsidian is composed of two or more `<span>` elements.  By traversing t
 1. The first element (the `#` symbol) additionally receives the `cm-hashtag-begin` class.
 2. The last element (the end of the tag) additionally receives the `cm-hashtag-end` class.
 
-### Example: DOM Structure for the #тег\_тест Tag
+### Example: DOM Structure for the tag
+
+Let's consider the `#тег_тест` tag.
 
 Obsidian splits this tag with an underscore into three separate `<span>` elements. The plugin locates them in the syntax tree and appends the custom classes:
 
@@ -142,9 +161,7 @@ Obsidian splits this tag with an underscore into three separate `<span>` element
 <span class="cm-hashtag cm-hashtag-end cm-tag-non-latin cm-tag-тег_тест">тест</span> 
 ```
 
-### Emojis
 
-Emojis (e.g., `#test😊`) **do not turn** a tag into a non-Latin one if all other letters inside it are Latin.
 
 ## Testing
 
@@ -154,4 +171,4 @@ The source code is covered by unit tests using `Vitest`. The tests verify variou
 
 This project is distributed under the free MIT License.
 
-[1]:	README_RU.md
+[1]:	https://github.com/javatutor-ru/obsidian-cyrillic-non-latin-tags/blob/main/README_RU.md
