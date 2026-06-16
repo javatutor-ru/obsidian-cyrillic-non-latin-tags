@@ -30,9 +30,9 @@ You can use these classes in your CSS snippet inside the `.obsidian/snippets` fo
 
 ```css
 .cm-tag-non-latin { 
- 	background-color: green; 
- 	color: whitesmoke; 
-} 
+    background-color: green; 
+    color: whitesmoke; 
+}  
 ```
 
 ### Styling a Particular Non-Latin Tag

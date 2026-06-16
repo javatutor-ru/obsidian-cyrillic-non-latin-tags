@@ -30,10 +30,10 @@
 ### Стилизация всех нелатинских тегов
 
 ```css
-.cm-tag-non-latin {  	
- 	background-color: green; 
-	color: whitesmoke; 
-} 
+.cm-tag-non-latin { 
+    background-color: green; 
+    color: whitesmoke; 
+}  
 ```
 
 ### Стилизация конкретного нелатинского тега
@@ -144,7 +144,7 @@ const tagThemeExtension = EditorView.theme({
 2. Последний элемент (конец тега) дополнительно получает класс `cm-hashtag-end`.
 
 
-### Пример DOM структуры тега 
+### Пример DOM структуры тега
 
 Рассмотрим тег `#тег_тест`.
 
